@@ -287,6 +287,7 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
 .nrow .mark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.4}
 .nrow .nv{text-align:right;white-space:nowrap;font-size:.8rem}
 .nrow.over .nv{color:var(--bad);font-weight:600}
+.ver{opacity:.7;font-size:.8em;white-space:nowrap}
 .install ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:.9rem;box-shadow:0 6px 20px rgb(0 0 0 / .2);max-width:calc(100% - 32px);text-align:center}
@@ -298,7 +299,7 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
 <div class="wrap">
   <header>
     <h1>Road &amp; Iron Log</h1>
-    <p class="sub">Weight, training, food, labs. One day at a time.</p>
+    <p class="sub">Weight, training, food, labs. One day at a time. <span class="ver">· v7</span></p>
     <div class="statusrow" aria-live="polite"><span class="pill" id="claude-pill">Google AI…</span><span class="pill" id="sync-pill">Loading your log…</span><button class="pill install-pill" id="install-btn" type="button" hidden>Install app</button></div>
     <div class="signin" id="ai-box" hidden>
       <p class="hint">Set up Google AI to turn on photo scanning, typed meals, watch screenshots and the coach. Barcode lookups and everything else already work.</p>
@@ -1350,10 +1351,10 @@ const sampleErr = e => ({
   no_key: "Set up Google AI in the Guide tab first.", bad_key: "Google didn't accept your API key. Check it in Guide → Google AI setup.",
   bad_model: "That AI model isn't available. Clear the Model box in Guide → Google AI setup and save again.",
   offline: "You're offline. Try again when you have signal; your log still saves.", network: "Couldn't reach Google AI. Check your connection and try again.",
-  rate_limited: "Google AI's limit was reached for now. Wait a minute, or check your quota in Google AI Studio.",
+  rate_limited: "Google AI's free limit is used up for now. The per-minute limit resets in a minute and the daily one at midnight Pacific time. Meanwhile, use the plate calculator below; it works without AI.",
   invalid_json: "Couldn't read the AI's answer. Try again.", refused: "Google AI wouldn't answer that one. Try rewording it.",
   empty_completion: "Google AI sent back nothing. Try again.", upstream_error: "Google AI had a problem. Try again in a moment."
-}[e && e.code] || "Something went wrong. Try again.");
+}[e && e.code] || "Something went wrong. Try again.") + (e && e.message && ["rate_limited", "bad_key", "bad_model", "upstream_error"].includes(e.code) ? ` Google says: ${String(e.message).split("\n")[0].slice(0, 200)}` : "");
 const sampleGone = e => ["no_key","bad_key"].includes(e && e.code);
 
 let db = null, uid = null, profileRef = null, entriesCol = null, labsCol = null;
@@ -3680,11 +3681,16 @@ async function gemini(input, opts = {}, retried = false){
   else if (opts.json) body.generationConfig = {responseMimeType: "application/json"};
   let r;
   try {
-    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(AI.model)}:generateContent`, {
+    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(opts._model || AI.model)}:generateContent`, {
       method: "POST", headers: {"Content-Type": "application/json", "x-goog-api-key": AI.key}, body: JSON.stringify(body), signal: opts.signal});
   } catch (e) { if (e && e.name === "AbortError") throw {code: "cancelled"}; throw {code: "network"}; }
   if (!r.ok) {
     let msg = ""; try { msg = ((await r.json()).error || {}).message || ""; } catch {}
+    if (r.status === 429 && opts.search && !opts._noSearch) return gemini(input, {...opts, search: false, _noSearch: true}, retried);
+    if (r.status === 429 && !opts._lite) {
+      try { return await gemini(input, {...opts, search: false, _noSearch: true, _lite: true, _model: "gemini-3.5-flash-lite"}, true); }
+      catch (e2) { if (e2 && !["rate_limited", "bad_model", "upstream_error"].includes(e2.code)) throw e2; }
+    }
     if (r.status === 404 && !retried && AI.model !== "gemini-flash-latest") {
       const prev = AI.model; AI.model = "gemini-flash-latest";
       try { const out = await gemini(input, opts, true); persistAI(); return out; } catch (e) { AI.model = prev; throw e; }
