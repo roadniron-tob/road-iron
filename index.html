@@ -288,6 +288,13 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
 .nrow .nv{text-align:right;white-space:nowrap;font-size:.8rem}
 .nrow.over .nv{color:var(--bad);font-weight:600}
 .ver{opacity:.7;font-size:.8em;white-space:nowrap}
+.qchips{gap:6px}
+.qchip,.swapchip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:.85rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.swaps{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:.75rem;color:var(--muted);margin:-2px 0 4px 12px}
+.swapchip{padding:3px 9px;font-size:.75rem}
+.hrz td{vertical-align:top}
+.hrz .v2{white-space:nowrap;font-weight:700}
+.hrz tr.hl td{background:color-mix(in srgb,var(--sign) 10%,transparent)}
 .install ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:.9rem;box-shadow:0 6px 20px rgb(0 0 0 / .2);max-width:calc(100% - 32px);text-align:center}
@@ -299,7 +306,7 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
 <div class="wrap">
   <header>
     <h1>Road &amp; Iron Log</h1>
-    <p class="sub">Weight, training, food, labs. One day at a time. <span class="ver">· v7</span></p>
+    <p class="sub">Weight, training, food, labs. One day at a time. <span class="ver">· v8</span></p>
     <div class="statusrow" aria-live="polite"><span class="pill" id="claude-pill">Google AI…</span><span class="pill" id="sync-pill">Loading your log…</span><button class="pill install-pill" id="install-btn" type="button" hidden>Install app</button></div>
     <div class="signin" id="ai-box" hidden>
       <p class="hint">Set up Google AI to turn on photo scanning, typed meals, watch screenshots and the coach. Barcode lookups and everything else already work.</p>
@@ -345,6 +352,25 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
         <div class="actions"><button class="primary" style="background:var(--sign-ink);color:var(--sign)" id="p-save" type="submit">Save</button><button class="linkish" id="p-cancel" type="button" hidden>Cancel</button></div>
       </form>
     </div>
+
+    <section>
+      <h2>You</h2>
+      <form class="panel" id="me-form">
+        <p class="hint" id="me-hint">Add your height and age to get your daily targets, healthy-weight range and heart-rate zones.</p>
+        <div class="grid">
+          <label class="field"><span class="label">Body</span><select id="me-sex"><option value="m">Male</option><option value="f">Female</option></select></label>
+          <label class="field"><span class="label">Age</span><input id="me-age" type="number" inputmode="numeric" min="14" max="99"></label>
+          <label class="field"><span class="label">Height (ft)</span><input id="me-ft" type="number" inputmode="numeric" min="4" max="7"></label>
+          <label class="field"><span class="label">Height (in)</span><input id="me-in" type="number" inputmode="numeric" min="0" max="11"></label>
+        </div>
+        <div class="actions"><button class="primary" type="submit" id="me-save">Save</button><span class="hint" id="me-status"></span></div>
+        <div class="stats" id="me-out"></div>
+      </form>
+      <div class="panel">
+        <h3>Heart rate (bpm)</h3>
+        <div id="me-hr" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    </section>
 
     <section>
       <h2>Weight trend</h2>
@@ -555,6 +581,31 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
     <section>
       <h2>Recover &amp; train smarter</h2>
       <details>
+        <summary>Train anywhere</summary>
+        <p class="hint" style="margin-bottom:10px">No gym? Use what's around you. Pick the Backpack, Travel Bands, Parking Lot or No Equipment plan in Workout plans.</p>
+        <h3>Weights you already have</h3>
+        <ul>
+          <li><b>Backpack:</b> fill it with water bottles (1 liter ≈ 2.2 lb), books or your laptop. Hug it for squats, hold it by the top strap for rows and Romanian deadlifts, wear it for push-ups, step-ups and rucking.</li>
+          <li><b>Gallon water jugs:</b> about 8.3 lb each, with handles, so they work like kettlebells for carries, curls, rows and goblet squats.</li>
+          <li><b>Grocery bags or a duffel:</b> load and carry. Farmer's carries build grip, core and shoulders.</li>
+          <li><b>Rolling suitcase:</b> drag it for a carry, or lift it by the handle for deadlifts.</li>
+          <li><b>Resistance bands (about $20):</b> the best travel buy. They give real resistance for presses, rows, pulldowns, curls and glute work.</li>
+        </ul>
+        <h3>Around a parking lot, rest stop or park</h3>
+        <ul>
+          <li><b>Curb:</b> step-ups and calf raises with your heels hanging off.</li>
+          <li><b>Park bench or picnic table:</b> incline push-ups, bench dips, step-ups and box squats. Check that it's solid first.</li>
+          <li><b>Truck tailgate or a sturdy rail:</b> incline push-ups. Never use the car hood; it dents and slides.</li>
+          <li><b>Stairs or a parking deck ramp:</b> the best low-impact cardio there is. Walk up, rest at the top, walk down.</li>
+          <li><b>Hotel room:</b> bed for hip thrusts and box squats, desk for incline push-ups, wall for wall sits, and a chair for step-ups only if it can't roll.</li>
+        </ul>
+        <h3>Keep it safe at your weight</h3>
+        <ul>
+          <li>Skip jumping and running for now. Step jacks, stairs and rucking give the same heart-rate boost with much less knee stress.</li>
+          <li>On long drives, stop every 2 hours for 5 minutes of squats, calf raises and a walk. It helps blood sugar and circulation.</li>
+        </ul>
+      </details>
+      <details>
         <summary>Recovery</summary>
         <ul>
           <li><b>Sleep 7–9 hours.</b> Muscle is repaired while you sleep, and short nights raise hunger and blood sugar the next day.</li>
@@ -647,9 +698,10 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
           </div>
           <p class="hint num" id="sr-extra"></p>
           <div class="grid">
-            <label class="field"><span class="label">How much you ate</span><input id="sr-qty" type="number" inputmode="decimal" step="0.25" value="1"></label>
+            <label class="field"><span class="label">How much you ate</span><input id="sr-qty" type="text" inputmode="decimal" autocomplete="off" value="1"></label>
             <label class="field"><span class="label">Unit</span><select id="sr-unit"><option value="serv">servings</option><option value="g">grams</option></select></label>
           </div>
+          <div class="chips qchips" id="sr-qchips" aria-label="Quick amounts"></div>
           <p class="hint num" id="sr-total"></p>
           <div class="actions">
             <button class="primary" id="sr-add" type="button">Add to plate</button>
@@ -689,9 +741,10 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
           <details class="inner"><summary>Fiber, sugar, minerals &amp; vitamins</summary><div class="grid3" id="nf-mi" style="padding-bottom:12px"></div></details>
         </div>
         <div class="grid3">
-          <label class="field"><span class="label">Amount</span><input id="c-qty" type="number" inputmode="decimal" step="any" min="0" placeholder="1"></label>
+          <label class="field"><span class="label">Amount</span><input id="c-qty" type="text" inputmode="decimal" autocomplete="off" placeholder="1"></label>
           <label class="field" style="grid-column:span 2"><span class="label">Unit</span><select id="c-unit"></select></label>
         </div>
+        <div class="chips qchips" id="c-qchips" aria-label="Quick amounts"></div>
         <label class="field" id="c-method-wrap" hidden><span class="label">How it's cooked</span><select id="c-method"></select></label>
         <p class="hint" id="c-hint"></p>
         <div class="actions"><button class="primary" type="submit">Add to plate</button><span class="hint num" id="c-preview"></span></div>
@@ -737,7 +790,7 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
             <label class="field"><span class="label">Carbs g</span><input id="fe-c" type="number" inputmode="decimal" step="any" min="0"></label>
             <label class="field"><span class="label">Fat g</span><input id="fe-f" type="number" inputmode="decimal" step="any" min="0"></label>
           </div>
-          <div class="actions"><span class="label">Portion</span><button class="linkish" type="button" data-s="0.5">½×</button><button class="linkish" type="button" data-s="1.5">1½×</button><button class="linkish" type="button" data-s="2">2×</button></div>
+          <div class="actions"><span class="label">Portion</span><button class="linkish" type="button" data-s="0.25">¼×</button><button class="linkish" type="button" data-s="0.5">½×</button><button class="linkish" type="button" data-s="0.75">¾×</button><button class="linkish" type="button" data-s="1.5">1½×</button><button class="linkish" type="button" data-s="2">2×</button></div>
           <div class="actions"><button class="primary" type="submit">Save changes</button><button class="linkish" id="fe-cancel" type="button">Cancel</button></div>
         </form>
       </div>
@@ -962,7 +1015,27 @@ a.linkish{text-decoration:none;border-radius:8px;display:inline-flex;align-items
           <div class="flag"><b>Prediabetes</b><span class="hint">Track A1C and fasting glucose. A1C 5.7–6.4% is the prediabetes range. Losing 5–7% of your body weight lowers the risk of it turning into diabetes a lot.</span></div>
           <div class="flag"><b>High triglycerides</b><span class="hint">Sugary drinks, sweets, white bread and alcohol push these up. Salmon, walking and weight loss bring them down.</span></div>
           <div class="flag iron"><b>Low iron</b><span class="hint">Track ferritin, iron and hemoglobin. In men, low iron is worth having your doctor look into the cause, and take iron pills only if they tell you to.</span></div>
+          <div class="flag"><b>Testosterone</b><span class="hint">Extra body fat lowers testosterone; losing weight, lifting, sleeping 7+ hours and treating sleep apnea all raise it. Test it in the morning (7–10 am), and repeat a low result before acting. Skip "T-booster" supplements and talk to your doctor about low results.</span></div>
+          <div class="flag"><b>Blood pressure</b><span class="hint">Check it at a pharmacy machine or with a home cuff and add it below. Aim under 130/80. Holding your breath on heavy lifts spikes it, so breathe out as you push.</span></div>
         </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Ask for at your next test</h2>
+      <div class="panel">
+        <ul>
+          <li><b>A1C, fasting glucose and fasting insulin:</b> track prediabetes.</li>
+          <li><b>Lipid panel:</b> triglycerides, HDL, LDL.</li>
+          <li><b>Iron panel with ferritin, and a CBC:</b> your low iron and hemoglobin.</li>
+          <li><b>Comprehensive metabolic panel:</b> liver (ALT) and kidneys (eGFR). Useful with high protein and if you try creatine.</li>
+          <li><b>Total and free testosterone,</b> drawn in the morning.</li>
+          <li><b>TSH:</b> thyroid, which affects weight and energy.</li>
+          <li><b>Vitamin D and B12.</b></li>
+          <li><b>hs-CRP and uric acid:</b> inflammation and gout risk.</li>
+          <li>And a <b>sleep study</b> if your watch shows regular snoring.</li>
+        </ul>
+        <p class="hint">Retest A1C and lipids every 3 months while you're losing weight. Your doctor decides what's needed for you.</p>
       </div>
     </section>
 
@@ -1319,10 +1392,21 @@ const MARKERS = [
   {k:"hdl", n:"HDL (good)", u:"mg/dL", st:"1", up:true, rate:v => v<40?["bad","Low"]:v<60?["ok","OK"]:["ok","Good"]},
   {k:"ldl", n:"LDL", u:"mg/dL", st:"1", up:false, rate:v => v<100?["ok","Optimal"]:v<130?["ok","Near optimal"]:v<160?["warn","Borderline high"]:["bad","High"]},
   {k:"chol", n:"Total cholesterol", u:"mg/dL", st:"1", up:false, rate:v => v<200?["ok","Desirable"]:v<240?["warn","Borderline high"]:["bad","High"]},
-  {k:"ferritin", n:"Ferritin", u:"ng/mL", st:"1", up:true, rate:v => v<30?["bad","Low"]:v>400?["warn","High"]:["ok","Normal"]},
+  {k:"ferritin", n:"Ferritin", u:"ng/mL", st:"1", up:true, rate:(v,s) => v<30?["bad","Low"]:v>(s==="f"?150:400)?["warn","High"]:["ok","Normal"]},
   {k:"iron", n:"Iron", u:"mcg/dL", st:"1", up:true, rate:v => v<60?["bad","Low"]:v>170?["warn","High"]:["ok","Normal"]},
-  {k:"hgb", n:"Hemoglobin", u:"g/dL", st:"0.1", up:true, rate:v => v<13.5?["bad","Low"]:v>17.5?["warn","High"]:["ok","Normal"]},
+  {k:"hgb", n:"Hemoglobin", u:"g/dL", st:"0.1", up:true, rate:(v,s) => v<(s==="f"?12:13.5)?["bad","Low"]:v>(s==="f"?15.5:17.5)?["warn","High"]:["ok","Normal"]},
   {k:"vitd", n:"Vitamin D", u:"ng/mL", st:"1", up:true, rate:v => v<20?["bad","Deficient"]:v<30?["warn","Low"]:["ok","OK"]},
+  {k:"testo", n:"Testosterone, total", u:"ng/dL", st:"1", up:true, rate:(v,s) => s==="f" ? (v<15?["warn","Low"]:v>70?["warn","High"]:["ok","Normal"]) : (v<300?["bad","Low"]:v<400?["warn","Low-normal"]:v>1000?["warn","High"]:["ok","Normal"])},
+  {k:"ftesto", n:"Free testosterone", u:"pg/mL", st:"0.1", up:true, rate:(v,s) => s==="f" ? (v>6.4?["warn","High"]:["ok","Normal"]) : (v<50?["bad","Low"]:v>210?["warn","High"]:["ok","Normal"])},
+  {k:"tsh", n:"TSH (thyroid)", u:"mIU/L", st:"0.01", up:null, rate:v => v<0.4?["warn","Low"]:v>4.5?["warn","High"]:["ok","Normal"]},
+  {k:"b12", n:"Vitamin B12", u:"pg/mL", st:"1", up:true, rate:v => v<200?["bad","Low"]:v<300?["warn","Borderline"]:["ok","Normal"]},
+  {k:"insulin", n:"Fasting insulin", u:"µIU/mL", st:"0.1", up:false, rate:v => v<10?["ok","Good"]:v<25?["warn","High"]:["bad","Very high"]},
+  {k:"alt", n:"ALT (liver)", u:"U/L", st:"1", up:false, rate:(v,s) => { const top = s==="f"?25:33; return v>2*top?["bad","High"]:v>top?["warn","Above ideal"]:["ok","Normal"]; }},
+  {k:"egfr", n:"eGFR (kidney)", u:"mL/min", st:"1", up:true, rate:v => v>=90?["ok","Normal"]:v>=60?["warn","Mildly low"]:["bad","Low"]},
+  {k:"uric", n:"Uric acid", u:"mg/dL", st:"0.1", up:false, rate:(v,s) => v>(s==="f"?6:7)?["warn","High"]:["ok","Normal"]},
+  {k:"crp", n:"hs-CRP (inflammation)", u:"mg/L", st:"0.1", up:false, rate:v => v<1?["ok","Low risk"]:v<=3?["warn","Average risk"]:["bad","High"]},
+  {k:"bps", n:"Blood pressure, top", u:"mmHg", st:"1", up:false, rate:v => v<120?["ok","Normal"]:v<130?["warn","Elevated"]:v<140?["warn","Stage 1 high"]:v<180?["bad","Stage 2 high"]:["bad","Very high, get care now"]},
+  {k:"bpd", n:"Blood pressure, bottom", u:"mmHg", st:"1", up:false, rate:v => v<80?["ok","Normal"]:v<90?["warn","Stage 1 high"]:v<120?["bad","Stage 2 high"]:["bad","Very high, get care now"]},
 ];
 
 const $ = id => document.getElementById(id);
@@ -1711,6 +1795,32 @@ function factorOf(food, unit, q){
   const g = gramsOf(food, unit, q); return g ? g / 100 : 0;
 }
 const fmtN = v => v == null ? "" : String(Math.round(v * 10) / 10);
+const FRAC = {"¼": 0.25, "½": 0.5, "¾": 0.75, "⅓": 1 / 3, "⅔": 2 / 3, "⅛": 0.125};
+function parseQty(v){
+  let s = String(v == null ? "" : v).trim().replace(/,/g, ".");
+  if (!s) return null;
+  s = s.replace(/[¼½¾⅓⅔⅛]/g, m => " " + FRAC[m] + " ");
+  let tot = 0;
+  for (const p of s.split(/\s+/).filter(Boolean)) {
+    if (/^\d*\.?\d+\/\d*\.?\d+$/.test(p)) { const [a, b] = p.split("/").map(Number); if (!b) return null; tot += a / b; }
+    else { const n = Number(p); if (!Number.isFinite(n)) return null; tot += n; }
+  }
+  return tot > 0 ? tot : null;
+}
+function fmtQty(q){
+  if (q == null) return "";
+  const w = Math.floor(q + 1e-9), f = q - w;
+  const m = [[0.25, "¼"], [1 / 3, "⅓"], [0.5, "½"], [2 / 3, "⅔"], [0.75, "¾"]].find(([v]) => Math.abs(f - v) < 0.01);
+  return m ? (w ? String(w) : "") + m[1] : fmtN(q);
+}
+function qtyChips(boxId, inputId, onPick){
+  const box = $(boxId); if (!box) return;
+  ["¼", "⅓", "½", "¾", "1", "1½", "2"].forEach(t => {
+    const b = el("button", "qchip", t); b.type = "button"; b.setAttribute("aria-label", `Amount ${t}`);
+    b.addEventListener("click", () => { $(inputId).value = t; onPick(); });
+    box.appendChild(b);
+  });
+}
 function setNF(food){
   $("nf-cal").value = fmtN(food.k); $("nf-p").value = fmtN(food.p); $("nf-c").value = fmtN(food.c); $("nf-f").value = fmtN(food.f);
   MI.forEach(([k]) => { $("nf-" + k).value = food.mi && food.mi[k] != null ? fmtN(food.mi[k]) : ""; });
@@ -1738,7 +1848,7 @@ function readNF(){
   return {k: num($("nf-cal").value), p: num($("nf-p").value) || 0, c: num($("nf-c").value) || 0, f: num($("nf-f").value) || 0, mi};
 }
 function calcNow(){
-  const food = curFood(), q = num($("c-qty").value);
+  const food = curFood(), q = parseQty($("c-qty").value);
   if (!food || !(q > 0)) return null;
   const unit = $("c-unit").value, fac = factorOf(food, unit, q);
   if (!fac) return null;
@@ -1750,13 +1860,14 @@ function calcNow(){
   const kcal = baseK * fac + (m.p * 4 + m.c * 4 + m.f * 9) * xf;
   const mi = {}; Object.entries(b.mi).forEach(([k, v]) => { mi[k] = v * fac; });
   const uLabel = unit === "g" ? (food.ml ? "ml" : "g") : unit === "serv" ? "" : food.units[+unit.slice(1)][0];
-  const amount = unit === "g" ? `${fmtN(q)} ${uLabel}` : unit === "serv" ? `${fmtN(q)} serving${q === 1 ? "" : "s"}${food.st ? ` (${food.st})` : ""}` : `${fmtN(q)} × ${uLabel}${grams ? ` (${Math.round(grams)} ${food.ml ? "ml" : "g"})` : ""}`;
+  const amount = unit === "g" ? `${fmtN(q)} ${uLabel}` : unit === "serv" ? `${fmtQty(q)} serving${q > 1 ? "s" : ""}${food.st ? ` (${food.st})` : ""}` : `${fmtQty(q)} × ${uLabel}${grams ? ` (${Math.round(grams)} ${food.ml ? "ml" : "g"})` : ""}`;
   return {name: food.n, amount: amount + (m.s ? `, ${m.s}` : ""), p, c, f, kcal, mi};
 }
 function updatePreview(){
   const r = calcNow();
-  $("c-preview").textContent = r ? `≈ ${Math.round(r.kcal)} kcal · ${Math.round(r.p)} g protein` : "";
+  $("c-preview").textContent = r ? `${r.amount}: ≈ ${Math.round(r.kcal)} kcal · P ${Math.round(r.p)} · C ${Math.round(r.c)} · F ${Math.round(r.f)}` : ($("c-qty").value.trim() && curFood() ? "Amount not understood. Use a number like 0.5, ½ or 1/2." : "");
 }
+qtyChips("c-qchips", "c-qty", () => updatePreview());
 $("c-food").addEventListener("change", onFoodChange);
 ["c-method", "c-qty", "c-unit", "c-cname", "nf-cal", "nf-p", "nf-c", "nf-f", ...MI.map(([k]) => "nf-" + k)].forEach(id => $(id).addEventListener("input", updatePreview));
 $("c-unit").addEventListener("change", () => { $("c-qty").placeholder = $("c-unit").value === "g" ? "e.g. 150" : "1"; updatePreview(); });
@@ -1860,7 +1971,7 @@ $("fe-cancel").addEventListener("click", closeFoodEdit);
 document.querySelectorAll("#fl-edit [data-s]").forEach(b => b.addEventListener("click", () => {
   if (!feEdit) return; const s = +b.dataset.s; feEdit.scale *= s;
   ["fe-k", "fe-p", "fe-c", "fe-f"].forEach(id => { const v = num($(id).value); if (v != null) $(id).value = id === "fe-k" ? Math.round(v * s) : fmtN(v * s); });
-  const a = $("fe-amount").value.trim(); $("fe-amount").value = a ? `${a.replace(/^[\d.½]+× /, "")}`.replace(/^/, `${fmtN(feEdit.scale)}× `) : `${fmtN(feEdit.scale)}× portion`;
+  const a = $("fe-amount").value.trim().replace(/^[\d.¼½¾⅓⅔]+× /, ""); $("fe-amount").value = feEdit.scale === 1 ? a : `${fmtQty(feEdit.scale)}× ${a || "portion"}`;
 }));
 $("fl-edit").addEventListener("submit", async ev => {
   ev.preventDefault();
@@ -2048,13 +2159,13 @@ function renderLabs(){
       if (prev) {
         const d = r1(cur[m.k] - prev[m.k]);
         const ch = document.createElement("span");
-        const better = d === 0 ? "flat" : ((d > 0) === m.up ? "good" : "worse");
+        const better = d === 0 || m.up == null ? "flat" : ((d > 0) === m.up ? "good" : "worse");
         ch.className = "chg " + better;
         ch.textContent = d === 0 ? "No change" : `${d > 0 ? "▲" : "▼"} ${Math.abs(d)} since ${fmtShort(prev.date)}`;
         b.appendChild(ch);
       }
       const c = document.createElement("td");
-      const [cls, txt] = m.rate(cur[m.k]);
+      const [cls, txt] = m.rate(cur[m.k], profSex());
       const t = document.createElement("span"); t.className = "tag " + cls; t.textContent = txt; c.appendChild(t);
       tr.append(a, b, c); tb.appendChild(tr);
     });
@@ -2073,7 +2184,7 @@ function renderLabs(){
     armDelete(del, () => save(`labs/${l.date}`, null));
     btns.append(ed, del);
     const meta = document.createElement("div"); meta.className = "meta";
-    MARKERS.forEach(m => { if (typeof l[m.k] === "number") { const t = document.createElement("span"); const [cls] = m.rate(l[m.k]); t.className = "tag " + cls; t.textContent = `${m.n} ${l[m.k]}`; meta.appendChild(t); } });
+    MARKERS.forEach(m => { if (typeof l[m.k] === "number") { const t = document.createElement("span"); const [cls] = m.rate(l[m.k], profSex()); t.className = "tag " + cls; t.textContent = `${m.n} ${l[m.k]}`; meta.appendChild(t); } });
     row.append(top, btns); if (meta.childNodes.length) row.appendChild(meta);
     if (l.notes) { const p = document.createElement("div"); p.className = "txt"; p.textContent = l.notes; row.appendChild(p); }
     h.appendChild(row);
@@ -2474,7 +2585,7 @@ function fromOFF(p, code){
   };
 }
 function scanFactor(){
-  const q = num($("sr-qty").value) || 0;
+  const q = parseQty($("sr-qty").value) || 0;
   if ($("sr-unit").value === "g") return scan && scan.servingGrams ? q / scan.servingGrams : 0;
   return q;
 }
@@ -2710,22 +2821,23 @@ const GROUPS = [
 ];
 const GROUP_NAME = Object.fromEntries(GROUPS.map(g => [g.k, g.n]));
 const EX_LIB = {
-  chest: ["Incline dumbbell press","Dumbbell bench press","Barbell bench press","Incline barbell press","Machine chest press","Incline machine press","Smith machine incline press","Cable fly","Low-to-high cable fly","Pec deck / machine fly","Push-up","Incline push-up","Chest dip"],
-  shoulders: ["Dumbbell shoulder press","Machine shoulder press","Barbell overhead press","Arnold press","Lateral raise","Cable lateral raise","Machine lateral raise","Rear delt fly","Reverse pec deck","Face pull","Front raise","Upright row"],
-  upperback: ["Lat pulldown","Close-grip pulldown","Pull-up","Assisted pull-up","Seated cable row","Chest-supported row","One-arm dumbbell row","Barbell row","T-bar row","Machine row","Inverted row","Straight-arm pulldown","Dumbbell shrug","Barbell shrug"],
-  core: ["Plank","Side plank","Dead bug","Cable crunch","Crunch","Reverse crunch","Hanging knee raise","Captain's chair knee raise","Ab wheel rollout","Pallof press","Russian twist","Cable wood chop","Suitcase carry"],
-  lowerback: ["Back extension","45° hyperextension","Deadlift","Trap bar deadlift","Good morning","Bird dog","Superman","Reverse hyperextension","Rack pull"],
-  arms: ["Dumbbell curl","Barbell curl","EZ-bar curl","Hammer curl","Preacher curl","Cable curl","Incline dumbbell curl","Triceps pushdown","Overhead triceps extension","Skull crusher","Close-grip bench press","Triceps dip","Bench dip","Wrist curl","Reverse wrist curl","Reverse curl","Farmer's carry"],
-  legs: ["Leg press","Goblet squat","Back squat","Front squat","Hack squat","Smith machine squat","Box squat","Bulgarian split squat","Walking lunge","Reverse lunge","Step-up","Leg extension","Lying leg curl","Seated leg curl","Romanian deadlift","Dumbbell Romanian deadlift","Nordic curl","Adductor machine","Sled push"],
-  glutes: ["Hip thrust","Machine hip thrust","Glute bridge","Single-leg glute bridge","Cable kickback","Hip abduction machine","Cable pull-through","Sumo deadlift","Frog pump","Kettlebell swing"],
-  calves: ["Standing calf raise","Seated calf raise","Leg press calf raise","Single-leg calf raise","Smith machine calf raise","Tibialis raise"],
-  other: ["Incline treadmill walk","Treadmill walk","Outdoor walk","Stationary bike","Recumbent bike","Rowing machine","Elliptical","Stair climber","Swimming","Battle ropes","Neck curl","Neck extension","Stretching / mobility"],
+  chest: ["Incline dumbbell press","Dumbbell bench press","Barbell bench press","Incline barbell press","Machine chest press","Incline machine press","Smith machine incline press","Cable fly","Low-to-high cable fly","Pec deck / machine fly","Push-up","Incline push-up","Wall push-up","Chest dip","Dumbbell fly","Incline dumbbell fly","Dumbbell pullover","Dumbbell floor press","Backpack floor press","Backpack push-up","Band chest press","Band chest fly"],
+  shoulders: ["Dumbbell shoulder press","Machine shoulder press","Barbell overhead press","Arnold press","Lateral raise","Cable lateral raise","Machine lateral raise","Rear delt fly","Reverse pec deck","Face pull","Front raise","Upright row","Pike push-up","Backpack overhead press","Band overhead press","Band lateral raise","Band face pull","Band pull-apart"],
+  upperback: ["Lat pulldown","Close-grip pulldown","Pull-up","Assisted pull-up","Seated cable row","Chest-supported row","One-arm dumbbell row","Barbell row","T-bar row","Machine row","Inverted row","Straight-arm pulldown","Dumbbell shrug","Barbell shrug","Pendlay row","Dumbbell seal row","Backpack bent-over row","Backpack shrug","Band row","Band pulldown","Band straight-arm pulldown"],
+  core: ["Plank","Side plank","Dead bug","Cable crunch","Crunch","Reverse crunch","Hanging knee raise","Captain's chair knee raise","Ab wheel rollout","Pallof press","Russian twist","Cable wood chop","Suitcase carry","Band Pallof press","Standing knee raise","Incline mountain climber","Backpack front carry"],
+  lowerback: ["Back extension","45° hyperextension","Deadlift","Trap bar deadlift","Good morning","Bird dog","Superman","Reverse hyperextension","Rack pull","Backpack good morning","Band good morning"],
+  arms: ["Dumbbell curl","Barbell curl","EZ-bar curl","Hammer curl","Preacher curl","Cable curl","Incline dumbbell curl","Triceps pushdown","Overhead triceps extension","Skull crusher","Close-grip bench press","Triceps dip","Bench dip","Wrist curl","Reverse wrist curl","Reverse curl","Farmer's carry","Dumbbell skull crusher","Concentration curl","Dumbbell kickback","Backpack curl","Backpack triceps extension","Band curl","Band triceps pushdown","Water jug farmer's carry"],
+  legs: ["Leg press","Goblet squat","Back squat","Front squat","Hack squat","Smith machine squat","Box squat","Bulgarian split squat","Walking lunge","Reverse lunge","Step-up","Leg extension","Lying leg curl","Seated leg curl","Romanian deadlift","Dumbbell Romanian deadlift","Nordic curl","Adductor machine","Sled push","Dumbbell goblet sumo squat","Dumbbell lunge","Dumbbell step-up","Backpack goblet squat","Backpack lunge","Backpack Romanian deadlift","Backpack step-up","Curb step-up","Wall sit","Band squat","Bodyweight squat"],
+  glutes: ["Hip thrust","Machine hip thrust","Glute bridge","Single-leg glute bridge","Cable kickback","Hip abduction machine","Cable pull-through","Sumo deadlift","Frog pump","Kettlebell swing","Dumbbell hip thrust","Backpack hip thrust","Band glute bridge","Band lateral walk","Side-lying leg raise"],
+  calves: ["Standing calf raise","Seated calf raise","Leg press calf raise","Single-leg calf raise","Smith machine calf raise","Tibialis raise","Dumbbell calf raise","Curb calf raise","Backpack calf raise"],
+  other: ["Incline treadmill walk","Treadmill walk","Outdoor walk","Stationary bike","Recumbent bike","Rowing machine","Elliptical","Stair climber","Swimming","Battle ropes","Neck curl","Neck extension","Stretching / mobility","Rucking (backpack walk)","Stair climb","Parking deck ramp walk","Step jacks","Shadow boxing","Jump rope"],
 };
 const EX_GROUP = {};
 Object.entries(EX_LIB).forEach(([g, list]) => list.forEach(n => { EX_GROUP[n] = g; }));
 const EX_UNIT = {"Plank": "sec", "Side plank": "sec", "Suitcase carry": "sec", "Farmer's carry": "sec", "Battle ropes": "sec",
   "Incline treadmill walk": "min", "Treadmill walk": "min", "Outdoor walk": "min", "Stationary bike": "min", "Recumbent bike": "min",
-  "Rowing machine": "min", "Elliptical": "min", "Stair climber": "min", "Swimming": "min", "Stretching / mobility": "min"};
+  "Rowing machine": "min", "Elliptical": "min", "Stair climber": "min", "Swimming": "min", "Stretching / mobility": "min",
+  "Rucking (backpack walk)": "min", "Stair climb": "min", "Parking deck ramp walk": "min", "Shadow boxing": "min", "Jump rope": "min", "Step jacks": "sec", "Wall sit": "sec", "Backpack front carry": "sec", "Water jug farmer's carry": "sec"};
 const unitOf = n => EX_UNIT[n] || "reps";
 const UNIT_LABEL = {reps: "Reps", sec: "Seconds", min: "Minutes"};
 const HEAVY_GROUPS = new Set(["legs", "glutes", "lowerback"]);
@@ -2776,16 +2888,58 @@ const PLANS = {
       {k: "SB", n: "Strength B", ex: [["Trap bar deadlift", 3, "5"], ["Barbell overhead press", 3, "5"], ["Assisted pull-up", 3, "6–8", "or lat pulldown"], ["Hip thrust", 2, "8–10"], ["Dumbbell curl", 2, "10–12"]]},
     ]},
 };
+Object.assign(PLANS, {
+  fw: {name: "Free Weights A/B", level: "Beginner to intermediate", days: 3, perWeek: 3,
+    schedule: "3 days a week, alternating A and B. Rest 2 minutes on the first two lifts.",
+    fit: "Dumbbells and barbells only, no machines. Builds real-world strength and works in any gym with a rack and dumbbells.",
+    sessions: [
+      {k: "FWA", n: "Free weights A", ex: [["Goblet squat", 3, "8–12", "or barbell back squat"], ["Dumbbell bench press", 3, "8–10"], ["Pendlay row", 3, "8–10", "or barbell row"], ["Dumbbell Romanian deadlift", 3, "8–10"], ["Lateral raise", 3, "12–15"], ["Dumbbell curl", 2, "10–12"]]},
+      {k: "FWB", n: "Free weights B", ex: [["Romanian deadlift", 3, "6–8"], ["Incline dumbbell press", 3, "8–12"], ["One-arm dumbbell row", 3, "10–12"], ["Dumbbell step-up", 2, "8", "each leg"], ["Dumbbell shoulder press", 3, "8–12"], ["Dumbbell skull crusher", 2, "10–12"], ["Suitcase carry", 3, "30–40", "each side"]]},
+    ]},
+  dbul: {name: "Dumbbell Upper / Lower", level: "Intermediate", days: 4, perWeek: 4,
+    schedule: "4 days: Upper A, Lower A, rest, Upper B, Lower B. Just a pair of dumbbells and a bench.",
+    fit: "The Upper / Lower plan with only dumbbells. Good for home or a small gym.",
+    sessions: [
+      {k: "DUA", n: "DB upper A", ex: [["Dumbbell bench press", 3, "8–12"], ["One-arm dumbbell row", 3, "10–12"], ["Dumbbell shoulder press", 3, "8–12"], ["Dumbbell pullover", 2, "10–12"], ["Lateral raise", 3, "12–15"], ["Hammer curl", 2, "10–12"], ["Dumbbell kickback", 2, "12–15"]]},
+      {k: "DLA", n: "DB lower A", ex: [["Goblet squat", 3, "10–12"], ["Dumbbell Romanian deadlift", 3, "8–10"], ["Dumbbell lunge", 2, "8", "each leg"], ["Dumbbell hip thrust", 3, "10–12"], ["Dumbbell calf raise", 3, "12–15"], ["Dead bug", 3, "8"]]},
+      {k: "DUB", n: "DB upper B", ex: [["Incline dumbbell press", 3, "8–12"], ["Dumbbell seal row", 3, "10–12", "or chest-supported row"], ["Arnold press", 3, "8–12"], ["Incline dumbbell fly", 2, "12–15"], ["Rear delt fly", 3, "12–15"], ["Incline dumbbell curl", 2, "10–12"], ["Overhead triceps extension", 2, "10–12"]]},
+      {k: "DLB", n: "DB lower B", ex: [["Bulgarian split squat", 3, "8", "each leg"], ["Dumbbell goblet sumo squat", 3, "10–12"], ["Single-leg glute bridge", 3, "10", "each leg"], ["Dumbbell step-up", 2, "10", "each leg"], ["Dumbbell calf raise", 3, "15"], ["Side plank", 2, "20–30", "each side"]]},
+    ]},
+  pack: {name: "Backpack Workout", level: "Any level", days: 3, perWeek: 3,
+    schedule: "Any 3 days on the road, 30–40 minutes. Load a backpack with water bottles, books or your laptop bag.",
+    fit: "Gym-quality training with no gym. A loaded backpack works like a dumbbell: 1 liter of water is about 2.2 lb, a gallon jug about 8.3 lb.",
+    sessions: [
+      {k: "BP1", n: "Backpack day 1", ex: [["Backpack goblet squat", 3, "12–15", "hug the pack to your chest"], ["Backpack push-up", 3, "6–12", "or incline push-up without the pack"], ["Backpack bent-over row", 3, "12–15"], ["Backpack Romanian deadlift", 3, "12–15"], ["Backpack overhead press", 3, "10–12"], ["Backpack front carry", 3, "40–60"]]},
+      {k: "BP2", n: "Backpack day 2", ex: [["Backpack step-up", 3, "10", "each leg, use a sturdy bench or stairs"], ["Backpack floor press", 3, "12–15"], ["Backpack bent-over row", 3, "12–15"], ["Backpack hip thrust", 3, "12–15", "shoulders on the bed or a bench"], ["Backpack curl", 2, "12–15"], ["Backpack triceps extension", 2, "12–15"], ["Backpack calf raise", 3, "15–20"]]},
+    ]},
+  band: {name: "Travel Bands", level: "Any level", days: 3, perWeek: 3,
+    schedule: "Any 3 days, 30 minutes. A set of loop or handle bands costs about $20 and fits in a pocket of your bag.",
+    fit: "Hotel-room training with real resistance. Anchor bands in a closed door (door anchor) or around a sturdy post.",
+    sessions: [
+      {k: "BA1", n: "Bands day 1", ex: [["Band squat", 3, "15"], ["Band chest press", 3, "12–15"], ["Band row", 3, "12–15"], ["Band good morning", 3, "12–15"], ["Band lateral raise", 2, "15–20"], ["Band curl", 2, "15"], ["Band Pallof press", 3, "10", "each side"]]},
+      {k: "BA2", n: "Bands day 2", ex: [["Band glute bridge", 3, "15–20"], ["Band lateral walk", 3, "12", "each way"], ["Band pulldown", 3, "12–15"], ["Band overhead press", 3, "10–12"], ["Band face pull", 3, "15–20"], ["Band triceps pushdown", 2, "15"], ["Dead bug", 3, "8"]]},
+    ]},
+  lot: {name: "Parking Lot & Park", level: "Any level", days: 3, perWeek: 3,
+    schedule: "25–35 minutes at a rest stop, park or parking lot. Uses a curb, a bench, stairs or a ramp, and water jugs if you have them.",
+    fit: "For long driving days. Gets your legs and heart going after hours sitting. No jumping, so it's easy on your knees.",
+    sessions: [
+      {k: "LOT", n: "Lot circuit", ex: [["Bodyweight squat", 3, "12–15", "or sit-to-stand from the car seat edge"], ["Incline push-up", 3, "8–15", "hands on a bench, rail or tailgate, never the hood"], ["Curb step-up", 3, "10", "each leg"], ["Water jug farmer's carry", 3, "40–60", "or carry grocery bags"], ["Curb calf raise", 3, "15–20", "heels hanging off the curb"], ["Bench dip", 2, "8–12", "on a park bench"], ["Parking deck ramp walk", 1, "10–15", "or stairs"]]},
+    ]},
+});
 const CARDIO_SESSIONS = [
   {k: "Z2", n: "Zone 2 cardio", ex: [["Incline treadmill walk", 1, "30–45", "at a pace where you can still talk"]]},
   {k: "INT", n: "Interval cardio", ex: [["Stationary bike", 1, "20", "8 rounds: 30 s hard, 90 s easy"]]},
+  {k: "RUCK", n: "Rucking", ex: [["Rucking (backpack walk)", 1, "30–45", "start with 10–15 lb in the pack"]]},
+  {k: "STAIR", n: "Stairs & ramps", ex: [["Stair climb", 1, "10–20", "hotel stairs or a parking deck ramp, rest at each landing"]]},
+  {k: "LOW", n: "Low-impact cardio", ex: [["Elliptical", 1, "25–40", "or recumbent bike, rower or swimming"]]},
+  {k: "MOB", n: "Mobility & core", ex: [["Stretching / mobility", 1, "10–15"], ["Dead bug", 2, "8"], ["Bird dog", 2, "8", "each side"], ["Side plank", 2, "20–30", "each side"]]},
 ];
 const SESSIONS = {};
 Object.entries(PLANS).forEach(([pk, p]) => p.sessions.forEach(s => { SESSIONS[s.k] = {...s, plan: pk}; }));
 CARDIO_SESSIONS.forEach(s => { SESSIONS[s.k] = {...s, plan: "cardio"}; });
-const NON_LIFT = new Set(["Cardio", "Z2", "INT", "Rest"]);
+const NON_LIFT = new Set(["Cardio", "Z2", "INT", "RUCK", "STAIR", "LOW", "MOB", "Rest"]);
 const isLift = w => !!w && !NON_LIFT.has(w);
-const liftDay = e => isLift(e.workout) || (e.exercises || []).some(x => x.u !== "min") || !!(e.lifts && Object.keys(e.lifts).length);
+const liftDay = e => isLift(e.workout) || (!NON_LIFT.has(e.workout) && (e.exercises || []).some(x => x.u !== "min")) || !!(e.lifts && Object.keys(e.lifts).length);
 const sessionName = w => w === "Cardio" ? "Walk / cardio" : w === "Rest" ? "Rest" : w === "Free" ? "Free workout" : (SESSIONS[w] ? SESSIONS[w].n : w);
 const activePlanKey = () => (profile && PLANS[profile.plan]) ? profile.plan : "full";
 const activePlan = () => PLANS[activePlanKey()];
@@ -2793,6 +2947,42 @@ const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); r
 const topReps = t => { const m = String(t || "").match(/(\d+)\s*$/); return m ? +m[1] : null; };
 const lowReps = t => { const m = String(t || "").match(/^(\d+)/); return m ? +m[1] : null; };
 
+const SWAPS = {
+  "Leg press": ["Goblet squat", "Hack squat", "Backpack goblet squat", "Bodyweight squat"],
+  "Goblet squat": ["Leg press", "Backpack goblet squat", "Band squat"],
+  "Hack squat": ["Leg press", "Goblet squat"],
+  "Back squat": ["Goblet squat", "Leg press"],
+  "Dumbbell bench press": ["Machine chest press", "Push-up", "Backpack floor press", "Band chest press"],
+  "Incline dumbbell press": ["Incline machine press", "Incline push-up", "Band chest press"],
+  "Machine chest press": ["Dumbbell bench press", "Push-up", "Band chest press"],
+  "Barbell bench press": ["Dumbbell bench press", "Machine chest press"],
+  "Seated cable row": ["One-arm dumbbell row", "Band row", "Backpack bent-over row"],
+  "Chest-supported row": ["Dumbbell seal row", "One-arm dumbbell row", "Band row"],
+  "One-arm dumbbell row": ["Seated cable row", "Backpack bent-over row", "Band row"],
+  "Lat pulldown": ["Assisted pull-up", "Band pulldown", "Straight-arm pulldown"],
+  "Close-grip pulldown": ["Lat pulldown", "Band pulldown"],
+  "Dumbbell Romanian deadlift": ["Romanian deadlift", "Backpack Romanian deadlift", "Band good morning"],
+  "Romanian deadlift": ["Dumbbell Romanian deadlift", "Backpack Romanian deadlift"],
+  "Dumbbell shoulder press": ["Machine shoulder press", "Backpack overhead press", "Band overhead press"],
+  "Machine shoulder press": ["Dumbbell shoulder press", "Band overhead press"],
+  "Glute bridge": ["Hip thrust", "Backpack hip thrust", "Band glute bridge"],
+  "Hip thrust": ["Glute bridge", "Dumbbell hip thrust", "Backpack hip thrust"],
+  "Lateral raise": ["Cable lateral raise", "Band lateral raise"],
+  "Face pull": ["Band face pull", "Rear delt fly", "Band pull-apart"],
+  "Triceps pushdown": ["Band triceps pushdown", "Overhead triceps extension", "Bench dip"],
+  "Dumbbell curl": ["Hammer curl", "Band curl", "Backpack curl"],
+  "Leg extension": ["Wall sit", "Bodyweight squat"],
+  "Seated leg curl": ["Lying leg curl", "Dumbbell Romanian deadlift"],
+  "Lying leg curl": ["Seated leg curl", "Dumbbell Romanian deadlift"],
+  "Standing calf raise": ["Dumbbell calf raise", "Curb calf raise", "Leg press calf raise"],
+  "Seated calf raise": ["Standing calf raise", "Dumbbell calf raise"],
+  "Farmer's carry": ["Water jug farmer's carry", "Suitcase carry"],
+  "Plank": ["Dead bug", "Side plank"],
+  "Step-up": ["Curb step-up", "Dumbbell step-up", "Reverse lunge"],
+  "Walking lunge": ["Reverse lunge", "Dumbbell lunge", "Backpack lunge"],
+  "Incline treadmill walk": ["Parking deck ramp walk", "Stair climb", "Rucking (backpack walk)"],
+  "Stationary bike": ["Recumbent bike", "Elliptical", "Rowing machine"],
+};
 const MUSCLES = {
   chest: {m: "Pectoralis major (upper and lower parts) and pectoralis minor.",
     does: "Pushes your arms forward and together: pushing a door, getting up off the floor.",
@@ -3168,6 +3358,12 @@ function renderPlanList(){
     if (sub) b.appendChild(mk("small", null, sub));
     b.addEventListener("click", () => pickExercise(n, {sets, reps, last}));
     box.appendChild(b);
+    const alts = (SWAPS[n] || []).filter(a => a !== n);
+    if (alts.length) {
+      const sw = mk("div", "swaps"); sw.appendChild(mk("span", null, "Swap:"));
+      alts.forEach(a => { const c = mk("button", "swapchip", a); c.type = "button"; c.addEventListener("click", () => pickExercise(a, {sets, reps, last: exHistory(a, date)[0]})); sw.appendChild(c); });
+      box.appendChild(sw);
+    }
   });
   const n = s.ex.filter(([x]) => done.has(x)).length;
   $("tr-plan-hint").textContent = n === s.ex.length ? "Session complete. Nice work." : `${n} of ${s.ex.length} done. Tap an exercise to fill it in below.`;
@@ -3490,8 +3686,74 @@ function renderTrain(){
 }
 onExChange();
 
+/* ---------- You: profile, recommendations, heart rate ---------- */
+function renderMe(){
+  const h = profile && profile.heightIn, age = profile && profile.age, sex = profSex();
+  if (!$("me-form").contains(document.activeElement)) {
+    $("me-sex").value = sex; setVal("me-age", age);
+    setVal("me-ft", h ? Math.floor(h / 12) : null); setVal("me-in", h ? Math.round(h % 12) : null);
+  }
+  $("me-hint").hidden = !!(h && age);
+  const out = $("me-out"); out.innerHTML = "";
+  const W = weightNow();
+  const stat = (big, small) => { const d = el("div"); d.append(el("strong", "num", big), el("small", null, small)); out.appendChild(d); };
+  if (h && W) {
+    const bmi = 703 * W / (h * h);
+    const cat = bmi < 18.5 ? "underweight" : bmi < 25 ? "healthy" : bmi < 30 ? "overweight" : bmi < 35 ? "obesity class 1" : bmi < 40 ? "obesity class 2" : "obesity class 3";
+    stat(bmi.toFixed(1), `BMI · ${cat}`);
+    stat(`${Math.round(18.5 * h * h / 703)}–${Math.round(24.9 * h * h / 703)} lb`, "healthy-weight range for your height");
+    stat(`${Math.round(W * 0.9)} lb`, "first milestone: 10% down, the biggest health win");
+  }
+  let R = null; try { R = roadmap(); } catch {}
+  if (R && R.cal) stat(R.cal.toLocaleString(), `calories a day · goal: ${GOALS[R.g].n.toLowerCase()}`);
+  if (R) stat(`${R.protein} g`, "protein a day");
+  stat(sex === "f" ? "≈ 2.7 L" : "≈ 3.7 L", "water a day from drinks and food; more on hot or training days");
+  stat(sex === "f" ? "under 35 in" : "under 40 in", "waist target; above it raises blood sugar and heart risk");
+  stat("7–9 h", "sleep a night");
+  const hr = $("me-hr"); hr.innerHTML = "";
+  if (!age) hr.appendChild(el("p", "hint", "Add your age to see your heart-rate zones."));
+  else {
+    const mx = Math.round(208 - 0.7 * age);
+    const p = el("p"); p.append("Estimated max heart rate: ", el("b", "num", `${mx} bpm`), " (208 − 0.7 × your age)."); hr.appendChild(p);
+    const tbl = el("table", "labs-tbl hrz");
+    const th = el("thead"); const thr = el("tr"); ["Zone", "BPM", "What it's for"].forEach(t => thr.appendChild(el("th", null, t))); th.appendChild(thr); tbl.appendChild(th);
+    const tb = el("tbody");
+    [["1 · Easy", .5, .6, "Warm-up, cool-down and recovery walks."],
+     ["2 · Fat-burning base", .6, .7, "Most of your cardio: brisk walks, rucking, incline treadmill. You can still talk in sentences."],
+     ["3 · Moderate", .7, .8, "Harder walks, stairs and ramps. Talking gets choppy."],
+     ["4 · Hard", .8, .9, "Short intervals only, like 30 seconds hard on the bike."],
+     ["5 · Max", .9, 1, "All-out efforts. Skip for now; you don't need them to lose fat."]].forEach(([n, a, b, d], i) => {
+      const tr = el("tr", i === 1 ? "hl" : null); tr.append(el("td", null, n), el("td", "num v2", `${Math.round(mx * a)}–${Math.round(mx * b)}`), el("td", null, d)); tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); const wrap = el("div", "scroll"); wrap.appendChild(tbl); hr.appendChild(wrap);
+  }
+  const rest = byDateDesc().find(e => typeof e.hrRest === "number");
+  const rp = el("p");
+  if (rest) {
+    const v = rest.hrRest;
+    const [cls, txt] = v < 60 ? ["ok", "athletic or very fit"] : v < 70 ? ["ok", "good"] : v < 80 ? ["warn", "average"] : v <= 100 ? ["warn", "high-normal; drops with cardio and weight loss"] : ["bad", "high; tell your doctor"];
+    rp.append("Your resting pulse: ", el("b", "num", `${v} bpm`), ` on ${fmtShort(rest.date)} `, el("span", "tag " + cls, txt));
+  } else rp.append("Log your resting pulse from your watch on the Log tab and it gets rated here. Normal is 60–100 bpm, and fitter people sit lower.");
+  hr.appendChild(rp);
+  hr.appendChild(el("p", "hint", "Blood pressure medicines like beta blockers lower your heart rate and shift these zones. If you take one, go by how hard it feels instead."));
+}
+$("me-form").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const age = num($("me-age").value), ft = num($("me-ft").value), inch = num($("me-in").value) || 0;
+  const heightIn = ft ? ft * 12 + inch : null;
+  if (age != null && (age < 14 || age > 99)) { toast("Check your age"); return; }
+  if (heightIn != null && (heightIn < 48 || heightIn > 90)) { toast("Check your height"); return; }
+  const next = {...(profile || {}), sex: $("me-sex").value};
+  if (age != null) next.age = Math.round(age); if (heightIn) next.heightIn = heightIn;
+  $("me-save").disabled = true;
+  try { await save("profile", next); mapSex = null; $("me-status").textContent = "Saved."; setTimeout(() => { $("me-status").textContent = ""; }, 2500); }
+  catch { toast("Couldn't save. Try again."); }
+  $("me-save").disabled = false;
+});
+qtyChips("sr-qchips", "sr-qty", () => renderScanTotal());
+
 /* ---------- Log events ---------- */
-function renderAll(){ renderSign(); renderChart(); renderHint(); renderHistory(); renderWeek(); renderCoach(); renderMyFoods(); renderFoodLog(); renderTrain(); if (photos.length) renderPhotos(); }
+function renderAll(){ renderSign(); renderChart(); renderHint(); renderHistory(); renderWeek(); renderCoach(); renderMyFoods(); renderFoodLog(); renderTrain(); renderMe(); if (photos.length) renderPhotos(); }
 $("f-date").value = today();
 $("f-date").addEventListener("change", () => { if ($("f-date").value) fillForm($("f-date").value); });
 $("f-today").addEventListener("click", () => { $("f-date").value = today(); fillForm(today()); });
